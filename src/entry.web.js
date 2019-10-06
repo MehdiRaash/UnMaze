@@ -1,1 +1,1 @@
-console.log('yuhu')
+import './css/tailwind.css';
