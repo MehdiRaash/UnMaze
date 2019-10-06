@@ -1,3 +1,6 @@
+#apps dependencies 
+dist/
+
 # Logs
 logs
 *.log
