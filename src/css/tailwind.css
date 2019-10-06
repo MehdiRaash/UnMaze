@@ -10,4 +10,68 @@
 }
 
 @tailwind components; 
+  
+/* Color Theme Swatches in Hex */
+.Instrospección--1-hex { color: #0A5373; }
+.Instrospección--2-hex { color: #09213E; }
+.Instrospección--3-hex { color: #FFB856; }
+.Instrospección--4-hex { color: #F26B5E; }
+.Instrospección--5-hex { color: #A64C44; }
+
+/* Color Theme Swatches in RGBA */
+.Instrospección--1-rgba { color: rgba(10, 83, 115, 1); }
+.Instrospección--2-rgba { color: rgba(9, 33, 62, 1); }
+.Instrospección--3-rgba { color: rgba(255, 184, 86, 1); }
+.Instrospección--4-rgba { color: rgba(242, 107, 94, 1); }
+.Instrospección--5-rgba { color: rgba(166, 76, 68, 1); }
+
+/* Color Theme Swatches in HSLA */
+.Instrospección--1-hsla { color: hsla(198, 83, 24, 1); }
+.Instrospección--2-hsla { color: hsla(212, 74, 13, 1); }
+.Instrospección--3-hsla { color: hsla(34, 100, 66, 1); }
+.Instrospección--4-hsla { color: hsla(5, 85, 65, 1); }
+.Instrospección--5-hsla { color: hsla(4, 41, 45, 1); }
+
+:root {
+  --colour-unmaze-1:#0A5373; 
+  --colour-unmaze-2:#09213E;
+  --colour-unmaze-3:#FFB856;
+  --colour-unmaze-4:#F26B5E;
+  --colour-unmaze-5:#A64C44;
+}
+ 
+header { 
+  height: 4.5rem;
+  /* background-image: linear-gradient(hsla(12,12,12), hsla(44,4,4)); */
+  background-image: linear-gradient(var(--colour-unmaze-3), var(--colour-unmaze-4)); 
+}
+
+h1 {
+  padding: 100px 0;
+  font: 44px "Arial";
+  text-align: center;
+}
+
+header h1 {
+  color: white;
+}
+
+svg {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+}
+
+@media (max-width: 699px) {
+  .svg--lg {
+    display: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .svg--sm {
+    display: none;
+  }
+}
 @tailwind utilities;
