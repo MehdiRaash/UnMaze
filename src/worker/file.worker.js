@@ -1,12 +1,11 @@
 import words from '../files/Persian_words.json';
+//let words = { 'آبی': '1', 'چپی': '1' }
 const log = console.log;
 
 onmessage = function (e) {
   //console.log(e.data)
 };
-
-//postMessage(y);
-
+let start = performance.now();
 const persianAlphabetMap = () => {
   let fa = new Map();
   fa.set(0, { char: 'ا' });
@@ -89,6 +88,13 @@ const fa = [
   'هٔ',
   'ئ'];
 
+/** having a counter handler for debugging purposes */
+const Counter = function () {
+  this.counter = 0;
+  this.inc = () => { this.counter += 1; },
+    this.print = () => { return this.counter; }
+}
+
 class Node {
   constructor(char, isLeaf = false) {
     if (char === null) {
@@ -110,7 +116,6 @@ class Node {
         if (this.children.has(indexOf)) {
           theNode = this.children.get(indexOf);
         } else {
-
           this.children.set(indexOf, node);
           theNode = node;
         }
@@ -124,22 +129,48 @@ class Node {
     }
 
   }
+  addFather(node) {
+    node.father = this;
+  }
   setAsLeaf() {
     this.isLeaf = true;
   }
 }
 
-/** having a counter handler for debugging purposes */
-const Counter = function () {
-  this.counter = 0;
-  this.inc = () => { this.counter += 1; },
-  this.print = () => { return this.counter; }
-}
+const leaftNodeCollection = {
+  pos_1: new Map(),
+  pos_2: new Map(),
+  pos_3: new Map(),
+  pos_4: new Map(),
+  pos_5: new Map(),
+  pos_6: new Map(),
+  pos_7: new Map(),
+  pos_8: new Map(),
+  pos_9: new Map(),
+  pos_10: new Map(),
+  pos_11: new Map(),
+  pos_12: new Map(),
+  pos_13: new Map(),
+  pos_14: new Map(),
+  pos_15: new Map(),
+  init: () => {
+  },
+  add: function (wordLength, node) {
+    let posNumber = 'pos_' + String(wordLength);
+    let charNum = fa.indexOf(node.char);
+
+    this[posNumber].set(
+      charNum,
+      Array.isArray(this[posNumber].get(charNum)) ? [node, ...this[posNumber].get(charNum)] : [node]
+    );
+  }
+};
 
 let rootNode = new Node(null);
 
-/** an alias for root node so , generally, seems more generic in loop */
 const getRootNode = () => rootNode;
+
+/** an alias for root node so , generally, seems more generic in loop */
 let parentNode = getRootNode();
 
 let wordCount = new Counter();
@@ -147,15 +178,16 @@ let wordCount = new Counter();
 for (let word in words) {
   wordCount.inc();
 
-  /** make sure to have an array representaition of word */
   let wordInArr = word.split('');
   wordInArr.forEach((char, index) => {
 
     let node = parentNode.addChild(new Node(char));
+    parentNode.addFather(node);
 
     /** if this is the last Char, make the node as a leaf node*/
     if (index === wordInArr.length - 1) {
       node.setAsLeaf();
+      leaftNodeCollection.add(wordInArr.length, node);
     }
 
     parentNode = node;
@@ -163,5 +195,5 @@ for (let word in words) {
 
   parentNode = getRootNode();
 }
-
-log(wordCount.print())
+let finish = performance.now();
+console.dir(leaftNodeCollection)
