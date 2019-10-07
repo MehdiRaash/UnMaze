@@ -1,4 +1,4 @@
-//import words from '../files/Persian_words.json';
+import dicWords from '../files/Persian_words.json';
 const log = console.log;
 
 onmessage = function (e) {
@@ -46,6 +46,7 @@ const persianAlphabetMap = () => {
   fa.set(34, { char: 'اً' });
   fa.set(35, { char: 'ة' });
   fa.set(36, { char: 'هٔ' });
+  fa.set(37, { char: 'ئ' });
   return fa;
 }
 const fa = [
@@ -85,13 +86,14 @@ const fa = [
   'آ',
   'اً',
   'ة',
-  'هٔ']; 
+  'هٔ',
+  'ئ'];
 
 
-
-
-let words = { "آب": 1, "درمان": 1, "آب": 1, "آبادان": 1 };
-words = { "آبی": '1' };
+// for(let y in dicWords){
+//   console.log(y)
+// }
+let words = { "آب": "1", "درمان": "1", "آب": "1", "آبادان": "1" };
 
 class Node {
   constructor(char, isLeaf = false) {
@@ -104,44 +106,57 @@ class Node {
 
   }
   addChild(node) {
-    let indexOf = fa.indexOf(node.char);
-    if(indexOf !== -1){
-      this.children.set(indexOf, node)
-    }else{
-      console.warn(node, 'a node char has not found!!!')
+    try {
+      /** the final node */
+      let theNode;
+      let indexOf = fa.indexOf(node.char);
+      if (indexOf !== -1) {
+
+        /** there was a Node for this position so just return it If not make a new one as the final node*/
+        if (this.children.has(indexOf)) {
+          theNode = this.children.get(indexOf);
+        } else {
+
+          this.children.set(indexOf, node);
+          theNode = node;
+        }
+
+        return theNode;
+      } else {
+        console.warn(node, 'a node char has not found!!!')
+      }
+    } catch (e) {
+      log(e)
     }
+
   }
-  setAsLeaf(){
+  setAsLeaf() {
     this.isLeaf = true;
   }
 }
 
 let rootNode = new Node(null);
-let newWord;
 
-let parentNode = rootNode;
+/** an alias for root node so , generally, seems more generic in loop */
+const getRootNode = () => rootNode;
+let parentNode = getRootNode();
+
 /** iterate over each word and just build the graph of Trie */
-for (word in words) {
-  newWord = true;
-  /** make sure to have an array representaition of word */
-  let wordInArr = word.split('');
-  //log(wordInArr)
+for (let word in dicWords) {
 
+  /** make sure to have an array representaition of word */
+  let wordInArr = word.split(''); 
   wordInArr.forEach((char, index) => {
 
-    let node = new Node(char);
-    parentNode.addChild(node); 
+    let node = parentNode.addChild(new Node(char));
 
     /** if this is the last Char, make the node as a leaf node*/
     if (index === wordInArr.length - 1) {
       node.setAsLeaf();
-      parentNode = node;
-    } else {
-      parentNode = node;
     }
 
+    parentNode = node;
   });
 
-  
 }
-log(rootNode)
+log(getRootNode())
