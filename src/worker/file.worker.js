@@ -1,4 +1,4 @@
-import dicWords from '../files/Persian_words.json';
+import words from '../files/Persian_words.json';
 const log = console.log;
 
 onmessage = function (e) {
@@ -89,12 +89,7 @@ const fa = [
   'هٔ',
   'ئ'];
 
-
-// for(let y in dicWords){
-//   console.log(y)
-// }
-let words = { "آب": "1", "درمان": "1", "آب": "1", "آبادان": "1" };
-
+ 
 class Node {
   constructor(char, isLeaf = false) {
     if (char === null) {
@@ -142,7 +137,7 @@ const getRootNode = () => rootNode;
 let parentNode = getRootNode();
 
 /** iterate over each word and just build the graph of Trie */
-for (let word in dicWords) {
+for (let word in words) {
 
   /** make sure to have an array representaition of word */
   let wordInArr = word.split(''); 
@@ -158,5 +153,6 @@ for (let word in dicWords) {
     parentNode = node;
   });
 
+  parentNode = getRootNode();
 }
 log(getRootNode())
