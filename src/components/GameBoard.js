@@ -7,7 +7,7 @@ const GameBoard = (props) => {
 
   return (
     <div className="md:flex" name="GameBoard">
-     {children}
+      {children}
     </div>
   );
 };
