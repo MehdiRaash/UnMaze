@@ -57,9 +57,7 @@ window.unmaze = {
     return fa;
   }
 };
-
-
-
+ 
 class App extends Component {
   constructor(props) {
     super(props)
