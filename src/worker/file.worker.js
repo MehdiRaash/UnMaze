@@ -89,7 +89,6 @@ const fa = [
   'هٔ',
   'ئ'];
 
- 
 class Node {
   constructor(char, isLeaf = false) {
     if (char === null) {
@@ -130,17 +129,26 @@ class Node {
   }
 }
 
+/** having a counter handler for debugging purposes */
+const Counter = function () {
+  this.counter = 0;
+  this.inc = () => { this.counter += 1; },
+  this.print = () => { return this.counter; }
+}
+
 let rootNode = new Node(null);
 
 /** an alias for root node so , generally, seems more generic in loop */
 const getRootNode = () => rootNode;
 let parentNode = getRootNode();
 
+let wordCount = new Counter();
 /** iterate over each word and just build the graph of Trie */
 for (let word in words) {
+  wordCount.inc();
 
   /** make sure to have an array representaition of word */
-  let wordInArr = word.split(''); 
+  let wordInArr = word.split('');
   wordInArr.forEach((char, index) => {
 
     let node = parentNode.addChild(new Node(char));
@@ -155,4 +163,5 @@ for (let word in words) {
 
   parentNode = getRootNode();
 }
-log(getRootNode())
+
+log(wordCount.print())
