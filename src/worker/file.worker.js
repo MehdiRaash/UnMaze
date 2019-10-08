@@ -129,11 +129,25 @@ class Node {
     }
 
   }
-  addFather(node) {
-    node.father = this;
+  addFather(parent) {
+    this.father = parent;
   }
   setAsLeaf() {
     this.isLeaf = true;
+  }
+  /** it backtracks till root to render the whole word */
+  print() {
+    let letters = [];
+ 
+    let checkFather = (node) => {
+      if (!node.char)
+        return
+
+      letters.push(node.char)
+      checkFather(node.father);
+    }
+    checkFather(this)
+    return letters.reverse().join('');
   }
 }
 
@@ -182,7 +196,7 @@ for (let word in words) {
   wordInArr.forEach((char, index) => {
 
     let node = parentNode.addChild(new Node(char));
-    parentNode.addFather(node);
+    node.addFather(parentNode);
 
     /** if this is the last Char, make the node as a leaf node*/
     if (index === wordInArr.length - 1) {
@@ -196,4 +210,7 @@ for (let word in words) {
   parentNode = getRootNode();
 }
 let finish = performance.now();
-console.dir(leaftNodeCollection)
+
+let n = leaftNodeCollection.pos_4.get(12)[6];
+
+log(n.print()); 
