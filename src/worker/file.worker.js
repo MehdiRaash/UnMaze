@@ -113,10 +113,10 @@ class Node {
       if (indexOf !== -1) {
 
         /** there was a Node for this position so just return it If not make a new one as the final node*/
-        if (this.children.has(indexOf)) {
-          theNode = this.children.get(indexOf);
+        if (this.children.has(fa[indexOf])) {
+          theNode = this.children.get(fa[indexOf]);
         } else {
-          this.children.set(indexOf, node);
+          this.children.set(fa[indexOf], node);
           theNode = node;
         }
 
@@ -146,7 +146,7 @@ class Node {
       letters.push(node.char)
       checkFather(node.father);
     }
-    checkFather(this)
+     checkFather(this) 
     return letters.reverse().join('');
   }
 }
@@ -174,8 +174,8 @@ const leaftNodeCollection = {
     let charNum = fa.indexOf(node.char);
 
     this[posNumber].set(
-      charNum,
-      Array.isArray(this[posNumber].get(charNum)) ? [node, ...this[posNumber].get(charNum)] : [node]
+      fa[charNum],
+      Array.isArray(this[posNumber].get(fa[charNum])) ? [node, ...this[posNumber].get(fa[charNum])] : [node]
     );
   }
 };
@@ -211,6 +211,5 @@ for (let word in words) {
 }
 let finish = performance.now();
 
-let n = leaftNodeCollection.pos_4.get(12)[6];
-
-log(n.print()); 
+ 
+log( leaftNodeCollection); 
