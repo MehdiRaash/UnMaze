@@ -1,5 +1,6 @@
 import { hot } from 'react-hot-loader/root';
 import React, { Component, Fragment } from "react";
+import { getRandom, fa, getFaIndex } from '../helper/main.js';
 
 const getStyle = () => {
   const style = {
@@ -20,20 +21,15 @@ class TileContainer extends Component {
     super(props);
     this.state = { tileArr: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}] };
   }
-  componentDidMount() { 
+  componentDidMount() {
+    this.draw();
   }
-  /** This is just for demonstration purpose */ 
+  /** This is just for demonstration purpose */
   generateRandomLetter() {
-    let fa = window.unmaze.persianAlphabetMap();
-
-    let getRandom = (min, max) => parseInt(Math.random() * (max - min) + min);
-
-    let newRandomedLetters = this.state.tileArr.map((tile) => tile.char = fa.get(getRandom(0, 32)));
-    return newRandomedLetters;
+    let fa = window.unmaze.persianAlphabetMap(); 
   }
-  generateRandomeTile() {
-   
-      this.setState({ tileArr: this.generateRandomLetter() })
+  draw() {
+    console.log(fa)
   }
   render() {
     const style = getStyle();
@@ -47,7 +43,7 @@ class TileContainer extends Component {
 
               return (
                 <Fragment key={index.toString()}>
-                  <div className="tile rounded-lg" key={index.toString()}>
+                  <div className="tile rounded-lg">
                     <span>{item.char || '.'}</span>
                   </div>
                   {(index + 1) % 5 ? null : <br />}
