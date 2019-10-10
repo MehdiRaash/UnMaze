@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Header from './Header.js';
 import Footer from './Footer.js';
 import GameDescription from './GameDescription.js';
@@ -11,23 +11,44 @@ import FoundWords from './FoundWords.js';
 import { getRandom, Counter } from '../../helper/main.js';
 
 /** using Worker to convert all persian words into Trie data structure */
-import Worker from '../../worker/file.worker.js'; 
+import Worker from '../../worker/file.worker.js';
 const worker = new Worker();
 
+import tileManager from '../tileManager.js';
+
 const log = console.log;
+ 
 
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { mainMessage: 'ss' }
+    this.state = { mainMessage: 'ss', tiles: [] }
   }
-  componentDidMount() {
-    worker.postMessage({ type: 'getRand', value: getRandom(5, 9) });
+  findRandomWord(cb) {
+    worker.postMessage({ type: 'getRand', value: getRandom(4, 8) });
     worker.onmessage = ({ data }) => {
       if (data.type === "getRand") {
-        this.setState({ mainMessage: data.value })
+        cb(data.value)
       }
-    }; 
+    };
+  }
+  componentDidMount() {
+
+
+    tileManager.init();
+    tileManager.assignDirection();
+
+    this.findRandomWord((randomWord) => {
+      log(randomWord)
+      tileManager.addFirstWord(randomWord);
+
+      this.setState({
+        tiles: tileManager.inArray().map(t => t.component())
+      });
+
+    });
+
+
   }
   doSth() {
     this.setState({ mainMessage: "okay" });
@@ -41,6 +62,17 @@ class App extends Component {
           <GameDescription />
           <GameBoard >
             <TileContainer>
+
+              {
+                this.state.tiles.map((Tile, index) => {
+                  return (
+                    <Fragment key={index.toString()}>
+                      <Tile />
+                      {(index + 1) % 5 ? null : <br />}
+                    </Fragment>
+                  );
+                })
+              }
 
             </TileContainer>
             <FoundWords></FoundWords>

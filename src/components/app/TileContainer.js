@@ -24,7 +24,7 @@ class TileContainer extends Component {
     super(props);
     this.state = { tileArr: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}] };
   }
-  componentDidMount() { 
+  componentDidMount() {
 
   }
   /** This is just for demonstration purpose */
@@ -37,21 +37,8 @@ class TileContainer extends Component {
     return (
       <div className=" w-full md:w-1/2 p-3 order-2" name="TileContainer">
         <button onClick={(e) => this.generateRandomeTile(e)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">نمایش حروف</button>
-        <div className="s" style={{ direction: 'ltr' }} >
-
-          {
-            this.state.tileArr.map((item, index) => {
-
-              return (
-                <Fragment key={index.toString()}>
-                  <div className="tile rounded-lg">
-                    <span>{item.char || index + 1}</span>
-                  </div>
-                  {(index + 1) % 5 ? null : <br />}
-                </Fragment>
-              );
-            })
-          }
+        <div className="s" style={{ direction: 'ltr' }}>
+          {this.props.children}
         </div>
       </div>
     );
