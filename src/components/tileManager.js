@@ -201,7 +201,6 @@ const tileManager = {
   randomedTakenTile: function () {
     return this.takenTiles[Math.floor(Math.random() * this.takenTiles.length)];
   }
-};
-
+}; 
 
 export default tileManager;
