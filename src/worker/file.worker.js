@@ -1,19 +1,9 @@
-import { fa, getFaIndex } from '../helper/main.js';
+import { fa, getFaIndex, Counter } from '../helper/main.js';
 import words from '../files/Persian_words.json';
 //let words = { 'آبی': '1', 'چپی': '1' }
 const log = console.log;
 
-onmessage = function (e) {
-  //console.log(e.data)
-};
 let start = performance.now();
-
-/** having a counter handler for debugging purposes */
-const Counter = function () {
-  this.counter = 0;
-  this.inc = () => { this.counter += 1; },
-    this.print = () => { return this.counter; }
-}
 
 class Node {
   constructor(char, isLeaf = false) {
@@ -97,11 +87,19 @@ const leaftNodeCollection = {
       fa[charNum],
       Array.isArray(this[posNumber].get(fa[charNum])) ? [node, ...this[posNumber].get(fa[charNum])] : [node]
     );
+  },
+  rand: function (number) {
+    let propName = 'pos_' + String(number);
+    let arr = [...this[propName].keys()];
+    let char = arr[Math.floor(Math.random() * this[propName].size)];
+
+    let nodes = this[propName].get(char)
+    let randomedNode = nodes[Math.floor(Math.random() * nodes.length)];
+    return randomedNode.print();
   }
 };
 
 let rootNode = new Node(null);
-
 const getRootNode = () => rootNode;
 
 /** an alias for root node so , generally, seems more generic in loop */
@@ -132,4 +130,12 @@ for (let word in words) {
 let finish = performance.now();
 
 
-log(leaftNodeCollection); 
+onmessage = function ({ data }) {
+  if (data.type === "getRand") {
+    postMessage({ type: data.type, value: leaftNodeCollection.rand(data.value) });
+  }
+  else if (data.type === "") {
+
+  }
+};
+//log(leaftNodeCollection)

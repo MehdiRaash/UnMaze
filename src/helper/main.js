@@ -89,5 +89,10 @@ const persianAlphabetMap = () => {
   fa.set(37, { char: 'ئ' });
   return fa;
 }
-
-module.exports = { getRandom, fa: getPersianAlphabet(), getFaIndex };
+/** having a counter handler for debugging purposes */
+const Counter = function () {
+  this.counter = 0;
+  this.inc = () => { this.counter += 1; },
+    this.print = () => { return this.counter; }
+}
+module.exports = { getRandom, fa: getPersianAlphabet(), getFaIndex, Counter };
