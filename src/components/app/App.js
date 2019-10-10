@@ -17,7 +17,7 @@ const worker = new Worker();
 import tileManager from '../tileManager.js';
 
 const log = console.log;
- 
+
 
 class App extends Component {
   constructor(props) {
@@ -39,12 +39,18 @@ class App extends Component {
     tileManager.assignDirection();
 
     this.findRandomWord((randomWord) => {
-      log(randomWord)
+
       tileManager.addFirstWord(randomWord);
 
       this.setState({
         tiles: tileManager.inArray().map(t => t.component())
       });
+
+      //  log(tileManager.treeOfRoutes(tileManager.tile_12) ) 
+
+      // do fill the tiles
+
+      tileManager.fillTiles();  
 
     });
 
@@ -62,7 +68,6 @@ class App extends Component {
           <GameDescription />
           <GameBoard >
             <TileContainer>
-
               {
                 this.state.tiles.map((Tile, index) => {
                   return (
@@ -73,7 +78,6 @@ class App extends Component {
                   );
                 })
               }
-
             </TileContainer>
             <FoundWords></FoundWords>
           </GameBoard>

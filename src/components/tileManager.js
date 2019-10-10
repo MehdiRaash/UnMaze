@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Tile from './Tile.js';
 
+
 const log = console.log;
 
 /** tiles container object */
@@ -191,16 +192,122 @@ const tileManager = {
     let randomNeighbour = (tile) => {
       let emptyTiles = tile.neighbours.filter(t => t.isEmpty());
       return emptyTiles[Math.floor(Math.random() * emptyTiles.length)]
-    };  
-    for (let char of wordInArr) { 
-      this.setValue(randomedTile, char); 
+    };
+    for (let char of wordInArr) {
+      this.setValue(randomedTile, char);
       randomedTile = randomNeighbour(randomedTile);
-    };  
+    }; 
+
 
   },
   randomedTakenTile: function () {
     return this.takenTiles[Math.floor(Math.random() * this.takenTiles.length)];
+  },
+  /**
+   * it calculates the possible routes and make the tree recursively using calculateRoutes()
+   * @returns {Object} route - route object tree
+   */
+  treeOfRoutes: function (tile) {
+    if (!tile)
+      throw new Error('tile should be provided');
+
+    let visited = [];
+
+    const NodeTree = class {
+      constructor(tile = null) {
+        this.tile = tile;
+        this.children = [];
+        this.isLeaf = false;
+        this.helperNumber = tile.tileNumber;
+      }
+      setAsVisited() {
+        visited.push(this.tile.tileNumber);
+        log(visited, 'umad inja')
+      }
+      popVisited() {
+        log(visited.pop(), 'andakht');
+      }
+      addAsChild(newNode) {
+        this.children.push(newNode);
+      }
+      addfather(n) {
+        this.father = n;
+      }
+      setAsLeaf() {
+        this.isLeaf = true;
+      }
+    }
+
+    const calculateRoutes = (node) => {
+
+      node.setAsVisited();
+
+      let toVisitNodeArr = node.tile.neighbours.filter((t) => {
+        if (t.isTaken() && visited.indexOf(t.tileNumber) === -1) {
+          return true;
+        }
+      });
+
+      node.mustVisitNumber = toVisitNodeArr.length;
+
+      if (toVisitNodeArr.length !== 0 && visited.length <= 4) {
+
+        for (let tile of toVisitNodeArr) {
+
+          let newNode = new NodeTree(tile);
+
+          node.addAsChild(newNode);
+          newNode.addfather(node);
+
+          calculateRoutes(newNode);
+
+        }
+
+      } else {
+        node.setAsLeaf();
+      }
+
+      node.popVisited();
+      return node;
+    }
+
+    return calculateRoutes(new NodeTree(tile));
+  },
+
+  /** 
+   * it finds an availableTile
+   * availableTile: means an empty tile connected to a taken tile 
+   * @returns {Tile} a taken tile  
+   */
+  availableTile: function () {
+    for (let tile of this.takenTiles) {
+      for (let neighbour of tile.neighbours) {
+        if (neighbour.isEmpty()) {
+          return neighbour;
+        }
+      }
+    }
+  },
+
+  /** 
+   * it gets one single "taken" neighbour connected to availableTile
+   * @param {Tile} availableTile - which is an empty tile  
+   * @returns {Tile}  
+   */
+  oneTakenTile: function (availableTile) {
+    for (let tile of availableTile.neighbours) {
+      if (tile.isTaken()) {
+        return tile;
+      }
+    }
+  },
+  fillTiles: function () {
+    let availableTile = tileManager.availableTile();
+    let takenTile = tileManager.oneTakenTile(availableTile);
+
+    let routeTree = tileManager.treeOfRoutes(takenTile)
+    log(routeTree);
   }
-}; 
+};
 
 export default tileManager;
