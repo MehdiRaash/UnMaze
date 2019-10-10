@@ -81,7 +81,10 @@ class Tile {
    * @returns {Boolean} 
    */
   isTaken() {
-    return this.value === true;
+    if(this.value){
+      return true
+    }
+    return false;
   }
 
   randDirection() {
