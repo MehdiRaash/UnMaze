@@ -95,4 +95,8 @@ const Counter = function () {
   this.inc = () => { this.counter += 1; },
     this.print = () => { return this.counter; }
 }
-module.exports = { getRandom, fa: getPersianAlphabet(), getFaIndex, Counter };
+const shuffle = function (array) {
+  return array.sort(() => Math.random() - 0.5);
+};
+
+module.exports = { getRandom, fa: getPersianAlphabet(), getFaIndex, Counter, shuffle };

@@ -12,12 +12,11 @@ import { getRandom, Counter } from '../../helper/main.js';
 
 /** using Worker to convert all persian words into Trie data structure */
 import Worker from '../../worker/file.worker.js';
-const worker = new Worker();
 
 import tileManager from '../tileManager.js';
 
 const log = console.log;
-
+const worker = new Worker();
 
 class App extends Component {
   constructor(props) {
@@ -25,32 +24,51 @@ class App extends Component {
     this.state = { mainMessage: 'ss', tiles: [] }
   }
   findRandomWord(cb) {
-    worker.postMessage({ type: 'getRand', value: getRandom(4, 8) });
-    worker.onmessage = ({ data }) => {
-      if (data.type === "getRand") {
-        cb(data.value)
-      }
-    };
+    worker.postMessage({ type: 'getRand', value: getRandom(6, 12) });
+    return new Promise((resolve, reject) => {
+      worker.onmessage = ({ data }) => {
+        if (data.type === "getRand") {
+          resolve(data.value)
+        }
+      };
+    })
+
   }
   componentDidMount() {
 
-
-    tileManager.init();
+    tileManager.init({ worker });
     tileManager.assignDirection();
 
-    this.findRandomWord((randomWord) => {
-
-      tileManager.addFirstWord(randomWord);
+    this.findRandomWord().then((rany) => { 
+      tileManager.addFirstWord(rany);
 
       this.setState({
         tiles: tileManager.inArray().map(t => t.component())
       });
 
-      //  log(tileManager.treeOfRoutes(tileManager.tile_12) ) 
+      let t = () => {
 
-      // do fill the tiles
+        tileManager.fillTiles().then(({ found, availableTile }) => {
 
-      tileManager.fillTiles();  
+          tileManager.setValue(availableTile, found.value);
+
+          if (tileManager.takenTiles.length === 25) {
+            return new Promise((res, rej) => rej('no availale tile'))
+          } else {
+            t();
+          }
+
+        }).catch((done) => {
+          this.setState({ tiles: tileManager.inArray().map(t => t.component()) });
+
+          log(done);
+          log(tileManager.keyword)
+        });
+
+      };
+
+      t();
+
 
     });
 

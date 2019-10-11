@@ -1,4 +1,4 @@
-import { fa, getFaIndex, Counter } from '../helper/main.js';
+import { fa, getFaIndex, Counter, shuffle } from '../helper/main.js';
 import words from '../files/Persian_words.json';
 //let words = { 'آبی': '1', 'چپی': '1' }
 const log = console.log;
@@ -13,7 +13,6 @@ class Node {
     this.char = char;
     this.isLeaf = isLeaf;
     this.children = new Map();
-
   }
   addChild(node) {
     try {
@@ -59,7 +58,8 @@ class Node {
     checkFather(this)
     return letters.reverse().join('');
   }
-}
+};
+
 
 const leaftNodeCollection = {
   pos_1: new Map(),// there's no One letter word, it line is just for complition sake
@@ -77,7 +77,7 @@ const leaftNodeCollection = {
   pos_13: new Map(),
   pos_14: new Map(),
   pos_15: new Map(),
-  init: () => {
+  init: function () {
   },
   add: function (wordLength, node) {
     let posNumber = 'pos_' + String(wordLength);
@@ -98,6 +98,104 @@ const leaftNodeCollection = {
     return randomedNode.print();
   }
 };
+
+const NodeUtility = {
+  init: function (root) {
+    if (!root)
+      throw new Error('root has not been provided')
+
+    this.root = root;
+  },
+  findWord: function ({ routes, rootChar }) {
+
+
+    let findChar = (lastNode) => {
+      if (lastNode.children.size === 0) {
+        return { state: false };
+      } else {
+        let keys = [], shuffledKey = [];
+        for (let [key] of lastNode.children.entries()) {
+          keys.push(key);
+        }
+        shuffledKey = shuffle(keys);
+
+        for (let i of shuffledKey) {
+          if (lastNode.children.get(i).isLeaf) {
+            return { state: true, value: lastNode.children.get(i).char };
+          } else {
+            return { state: false }
+          }
+        }
+      }
+    };
+
+    let searchInTree = (root, word) => {
+      let node = root;
+
+      for (let char of word) {
+
+        if (char === 0) {
+          let f = findChar(node); 
+          if (f.state) {
+            f.word = word
+            return f;
+          } else {
+            return { state: false }
+          }
+        } else {
+          if (node.children.get(char)) {
+            node = node.children.get(char);
+          } else {
+            return { state: false }
+          }
+        }
+
+      }
+
+    };
+
+
+    let found = false;
+
+    for (let route of routes) {
+
+      let loopInPath = (root, wordArr) => {
+
+        if (wordArr.length === 2) {
+          return { state: false, msg: 'length =2' }
+        }
+
+        let result = searchInTree(root, wordArr);
+        if (result.state) {
+          return result;
+        } else {
+          wordArr.shift();
+          if (wordArr.length > 2) {
+            return loopInPath(root, wordArr);
+          } else {
+            log('whole route notfound')
+          }
+
+        }
+      }
+
+
+      let copy = [...route, rootChar, 0];
+      let result = loopInPath(this.root, copy);
+      if (result && result.state) {
+        found = result;
+        break;
+      }
+
+    }
+
+    if (found) {
+      return found
+    } else {
+      return false;
+    }
+  }
+}
 
 let rootNode = new Node(null);
 const getRootNode = () => rootNode;
@@ -129,13 +227,19 @@ for (let word in words) {
 }
 let finish = performance.now();
 
+NodeUtility.init(getRootNode());
+leaftNodeCollection.init();
 
 onmessage = function ({ data }) {
   if (data.type === "getRand") {
     postMessage({ type: data.type, value: leaftNodeCollection.rand(data.value) });
   }
-  else if (data.type === "") {
+  else if (data.type === "findWord") {
 
+    postMessage({
+      type: data.type, value: NodeUtility.findWord(data.value)
+    })
   }
 };
-//log(leaftNodeCollection)
+
+log(parentNode)

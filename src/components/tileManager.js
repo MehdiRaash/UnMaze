@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Tile from './Tile.js';
 
-
 const log = console.log;
 
 /** tiles container object */
@@ -10,7 +9,7 @@ const tileManager = {
   /**
    * creates 25 tile object and pushes into container 
    */
-  init: function () {
+  init: function ({ worker }) {
     this.takenTiles = [];
     this.container = [];
 
@@ -19,6 +18,8 @@ const tileManager = {
         this['tile_' + String(i)] = new Tile(i)
       );
     }
+    this.worker = worker;
+    this.keyword = [];
   },
 
   /**
@@ -182,9 +183,8 @@ const tileManager = {
   drawIntoBoard: function (tile, char) {
     this.setValue(randomedTile, char);
   },
-
   addFirstWord: function (word) {
-
+    this.keyword.push(word)
     let wordInArr = word.split('');
 
     let randomedTile = this.randomTile();
@@ -196,9 +196,32 @@ const tileManager = {
     for (let char of wordInArr) {
       this.setValue(randomedTile, char);
       randomedTile = randomNeighbour(randomedTile);
-    }; 
-
-
+    };
+    // this.setValue(this.tile_1, 'ک');
+    // this.setValue(this.tile_2, 'و');
+    //this.setValue(this.tile_3, 'ه');
+    // this.setValue(this.tile_4, 'ک');
+    // this.setValue(this.tile_5, 'ک');
+    // this.setValue(this.tile_6, 'ک');
+    // this.setValue(this.tile_7, 'ن');
+    // this.setValue(this.tile_8, 'چ');
+    // this.setValue(this.tile_9, 'ر');
+    // this.setValue(this.tile_10, 'خ');
+    // this.setValue(this.tile_11, 'ک');
+    // this.setValue(this.tile_12, 'ک');
+    // this.setValue(this.tile_13, 'ک'); 
+    // this.setValue(this.tile_14, 'ا');
+    // this.setValue(this.tile_15, 'ه');
+    // this.setValue(this.tile_16, 'و'); 
+    // this.setValue(this.tile_17, 'ه');
+    // this.setValue(this.tile_18, 'و'); 
+    //this.setValue(this.tile_19, 'ه');
+    //this.setValue(this.tile_20, 'و');
+    // this.setValue(this.tile_21, 'ه');
+    // this.setValue(this.tile_22, 'و'); 
+    // this.setValue(this.tile_23, 'ه');
+    // this.setValue(this.tile_24, 'و'); 
+    //this.setValue(this.tile_25, 'و');
   },
   randomedTakenTile: function () {
     return this.takenTiles[Math.floor(Math.random() * this.takenTiles.length)];
@@ -212,6 +235,7 @@ const tileManager = {
       throw new Error('tile should be provided');
 
     let visited = [];
+    let leaves = [];
 
     const NodeTree = class {
       constructor(tile = null) {
@@ -222,10 +246,9 @@ const tileManager = {
       }
       setAsVisited() {
         visited.push(this.tile.tileNumber);
-        log(visited, 'umad inja')
       }
       popVisited() {
-        log(visited.pop(), 'andakht');
+        visited.pop()
       }
       addAsChild(newNode) {
         this.children.push(newNode);
@@ -235,6 +258,7 @@ const tileManager = {
       }
       setAsLeaf() {
         this.isLeaf = true;
+        leaves.push(this);
       }
     }
 
@@ -250,7 +274,7 @@ const tileManager = {
 
       node.mustVisitNumber = toVisitNodeArr.length;
 
-      if (toVisitNodeArr.length !== 0 && visited.length <= 4) {
+      if (toVisitNodeArr.length !== 0 && visited.length <= 5) {
 
         for (let tile of toVisitNodeArr) {
 
@@ -271,7 +295,9 @@ const tileManager = {
       return node;
     }
 
-    return calculateRoutes(new NodeTree(tile));
+    calculateRoutes(new NodeTree(tile));
+
+    return { leaves }
   },
 
   /** 
@@ -279,7 +305,7 @@ const tileManager = {
    * availableTile: means an empty tile connected to a taken tile 
    * @returns {Tile} a taken tile  
    */
-  availableTile: function () {
+  randomAvailableTile: function () {
     for (let tile of this.takenTiles) {
       for (let neighbour of tile.neighbours) {
         if (neighbour.isEmpty()) {
@@ -301,12 +327,63 @@ const tileManager = {
       }
     }
   },
-  fillTiles: function () {
-    let availableTile = tileManager.availableTile();
-    let takenTile = tileManager.oneTakenTile(availableTile);
+  inPathWords: function (node) {
 
-    let routeTree = tileManager.treeOfRoutes(takenTile)
-    log(routeTree);
+    let currentNode = node;
+    let arr = [];
+    while (currentNode.father) {
+      arr.push(currentNode.tile.value);
+      currentNode = currentNode.father;
+    }
+    return arr;
+  },
+  findWordChar: function (pathWord, cb) {
+
+    this.worker.postMessage({ type: 'findWord', value: pathWord });
+    return new Promise((resolve, reject) => {
+      this.worker.onmessage = ({ data }) => {
+        if (data.type === "findWord") {
+          resolve(data.value)
+        }
+      };
+    })
+
+  },
+  fillTiles: function () {
+
+
+    if (this.takenTiles.length === 25)
+      return Promise.reject('done')
+
+    let availableTile = tileManager.randomAvailableTile();
+    let takenTile = tileManager.oneTakenTile(availableTile);
+    let { leaves } = tileManager.treeOfRoutes(takenTile);
+
+
+    let routes = leaves.map((route) => {
+      return this.inPathWords(route);
+    });
+
+    return new Promise((resolve, reject) => {
+
+      this.findWordChar({ routes, rootChar: takenTile.value }).then((found) => {
+        if (found === false) { 
+          found = { state: true, value: ['س','ی','د','ف'][Math.floor(Math.random() * 4)] }
+        } else {
+          this.addKeyword(found)
+        }
+        resolve({ found, availableTile });
+      })
+
+    })
+
+  },
+  addKeyword: function (f) {
+    let temp = [...f.word];
+    temp.pop();
+    temp.push(f.value)
+    tileManager.keyword.push(temp.join(''));
+
   }
 };
 
