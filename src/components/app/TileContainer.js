@@ -35,9 +35,9 @@ class TileContainer extends Component {
     const style = getStyle();
 
     return (
-      <div className=" w-full md:w-1/2 p-3 order-2" name="TileContainer">
-        <button onClick={(e) => this.generateRandomeTile(e)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">نمایش حروف</button>
-        <div className="s" style={{ direction: 'ltr' }}>
+      <div className="w-full md:w-1/2 p-3 order-2" name="TileContainer">
+        {/* <button className=" " onClick={(e) => this.generateRandomeTile(e)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">نمایش حروف</button> */}
+        <div className="text-center" style={{ direction: 'ltr' }}>
           {this.props.children}
         </div>
       </div>

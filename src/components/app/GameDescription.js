@@ -6,9 +6,7 @@ const gameDescription = () =>
     <div>
       <span>آن</span> <span>می</span> <span>ز</span>
     </div>
-    <div>
-      توضیحات
-              </div>
+    <div></div>
   </div>;
   
 export default hot(gameDescription);

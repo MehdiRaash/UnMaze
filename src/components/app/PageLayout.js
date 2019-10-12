@@ -7,7 +7,7 @@ const PageLayput = (props) => {
 
   return (
     <div className="bg-gray-100">
-      <div className="container mx-auto text-center bg-white mt-4">
+      <div className="container mx-auto bg-white mt-4">
         {children}
       </div>
     </div>

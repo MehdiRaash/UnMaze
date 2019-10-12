@@ -18,10 +18,20 @@ import tileManager from '../tileManager.js';
 const log = console.log;
 const worker = new Worker();
 
+
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { mainMessage: 'ss', tiles: [] }
+    this.state = { 
+      tiles: [],
+      foundWords: [],
+      playing: false,
+      word: [],
+      cbs: [],
+      selectedTiles: []
+    }
+    window.app = this;
+    this.verifyWord.bind(this)
   }
   findRandomWord(cb) {
     worker.postMessage({ type: 'getRand', value: getRandom(6, 12) });
@@ -34,12 +44,28 @@ class App extends Component {
     })
 
   }
+  verifyWord() {
+    let word = this.state.word.join('');
+
+    if(this.state.foundWords.indexOf(word) === -1){
+      worker.postMessage({ type: 'verifyWord', value: this.state.word });
+    }
+    
+
+    worker.onmessage = ({ data }) => {
+      if (data.type === "verifyWord") {
+        if (data.value) {
+          this.setState({ foundWords: [...this.state.foundWords, word] });
+        }
+      }
+    };
+  }
   componentDidMount() {
 
     tileManager.init({ worker });
     tileManager.assignDirection();
 
-    this.findRandomWord().then((rany) => { 
+    this.findRandomWord().then((rany) => {
       tileManager.addFirstWord(rany);
 
       this.setState({
@@ -60,9 +86,7 @@ class App extends Component {
 
         }).catch((done) => {
           this.setState({ tiles: tileManager.inArray().map(t => t.component()) });
-
-          log(done);
-          log(tileManager.keyword)
+          this.state.drewWords = tileManager.keyword;
         });
 
       };
@@ -80,8 +104,7 @@ class App extends Component {
   render() {
     return (
       <>
-        <Header />
-        {this.state.mainMessage}
+        <Header /> 
         <PageLayout>
           <GameDescription />
           <GameBoard >
@@ -90,14 +113,14 @@ class App extends Component {
                 this.state.tiles.map((Tile, index) => {
                   return (
                     <Fragment key={index.toString()}>
-                      <Tile />
+                      <Tile verifyWord={this.verifyWord.bind(this)} />
                       {(index + 1) % 5 ? null : <br />}
                     </Fragment>
                   );
                 })
               }
             </TileContainer>
-            <FoundWords></FoundWords>
+            <FoundWords words={this.state.foundWords}></FoundWords>
           </GameBoard>
         </PageLayout>
         <Footer />

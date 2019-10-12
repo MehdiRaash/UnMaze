@@ -135,7 +135,7 @@ const NodeUtility = {
       for (let char of word) {
 
         if (char === 0) {
-          let f = findChar(node); 
+          let f = findChar(node);
           if (f.state) {
             f.word = word
             return f;
@@ -194,6 +194,25 @@ const NodeUtility = {
     } else {
       return false;
     }
+  },
+  verifyWord: function (wordInArr) { 
+
+    if(!wordInArr || wordInArr.length === 0)
+      throw new Error('no word has been provided');
+
+    let root = getRootNode();
+
+    for (let i = 0; i < wordInArr.length; i++) {
+
+      if (root.children.has(wordInArr[i])) {
+        if (wordInArr.length === i + 1) {
+          return root.children.get(wordInArr[i]).isLeaf === true;
+        }
+        root = root.children.get(wordInArr[i]);
+      } else {
+        return false;
+      }
+    }
   }
 }
 
@@ -235,10 +254,12 @@ onmessage = function ({ data }) {
     postMessage({ type: data.type, value: leaftNodeCollection.rand(data.value) });
   }
   else if (data.type === "findWord") {
-
     postMessage({
       type: data.type, value: NodeUtility.findWord(data.value)
     })
+  }
+  else if (data.type === "verifyWord") {
+    postMessage({ type: data.type, value: NodeUtility.verifyWord(data.value) });
   }
 };
 
