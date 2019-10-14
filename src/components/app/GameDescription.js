@@ -6,7 +6,7 @@ const gameDescription = () =>
     <div>
       <span>آن</span> <span>می</span> <span>ز</span>
     </div>
-    <div></div>
+    <div>فقط برای موس دوستداران کار میکنه فعلا.</div>
   </div>;
   
 export default hot(gameDescription);
