@@ -3,7 +3,12 @@ import React, { Component } from "react";
 
 function footer() {
   return (
-    <div className="text-center" >Made by Mehdi Raash, <a href="https://github.com/MehdiRaash/unmaze" style={{color:'darkred'}}>Github repo</a></div>
+    <div className="text-center" >
+       <span> ساخته شده توسط</span>
+       &nbsp;
+      <a href="https://github.com/MehdiRaash">مهدی راش </a>
+      <a href="/unmaze" style={{ color: 'darkred' }}>Github repo</a>
+    </div>
   );
 }
 
