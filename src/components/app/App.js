@@ -22,7 +22,7 @@ const worker = new Worker();
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = { 
+    this.state = {
       tiles: [],
       foundWords: [],
       playing: false,
@@ -47,10 +47,10 @@ class App extends Component {
   verifyWord() {
     let word = this.state.word.join('');
 
-    if(this.state.foundWords.indexOf(word) === -1){
+    if (this.state.foundWords.indexOf(word) === -1) {
       worker.postMessage({ type: 'verifyWord', value: this.state.word });
     }
-    
+
 
     worker.onmessage = ({ data }) => {
       if (data.type === "verifyWord") {
@@ -85,8 +85,10 @@ class App extends Component {
           }
 
         }).catch((done) => {
-          this.setState({ tiles: tileManager.inArray().map(t => t.component()) });
-          this.state.drewWords = tileManager.keyword;
+          this.setState({
+            tiles: tileManager.inArray().map(t => t.component()),
+            drewWords: tileManager.keyword
+          });
         });
 
       };
@@ -95,8 +97,7 @@ class App extends Component {
 
 
     });
-
-
+ 
   }
   doSth() {
     this.setState({ mainMessage: "okay" });
@@ -104,11 +105,11 @@ class App extends Component {
   render() {
     return (
       <>
-        <Header /> 
+        <Header />
         <PageLayout>
           <GameDescription />
           <GameBoard >
-            <TileContainer>
+            <TileContainer drewWords={this.state.drewWords}>
               {
                 this.state.tiles.map((Tile, index) => {
                   return (
