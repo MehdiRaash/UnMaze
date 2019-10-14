@@ -22,8 +22,7 @@ const getStyle = () => {
 class TileContainer extends Component {
   constructor(props) {
     super(props);
-    this.state = { tileArr: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}] };
-  }
+   }
   componentDidMount() {
 
   }
