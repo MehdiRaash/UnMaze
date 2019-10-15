@@ -7,7 +7,7 @@ function footer() {
        <span> ساخته شده توسط</span>
        &nbsp;
       <a href="https://github.com/MehdiRaash">مهدی راش </a>
-      <a href="/unmaze" style={{ color: 'darkred' }}>Github repo</a>
+      <a href="https://github.com/MehdiRaash/unmaze" style={{ color: 'darkred' }}>Github repo</a>
     </div>
   );
 }
