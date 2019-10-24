@@ -42,12 +42,7 @@ let TileComponent = ({ app, char, tileNumber }) => {
       }
 
     }
- 
-
-    // window.addEventListener('mousedown', (e) => {
-    //   log(e)
-    // });
-
+   
     function touchStart(params) {
       log('start')
     }
