@@ -38,20 +38,15 @@ let TileComponent = ({ app, char, tileNumber }) => {
         app.state.cbs.push(setHover);
       } else {
         setHover('forbidden');
-        cancelGame();
+        app.cancelGame();
       }
 
     }
+ 
 
-    function cancelGame() {
-      app.cbs.forEach(cb => {
-        cb('notselected');
-      });
-      app.word = [];
-      app.selectedTiles = [];
-      app.playing = false;
-      log(app)
-    }
+    // window.addEventListener('mousedown', (e) => {
+    //   log(e)
+    // });
 
     function touchStart(params) {
       log('start')
@@ -79,7 +74,7 @@ let TileComponent = ({ app, char, tileNumber }) => {
         <span>{char}</span>
       </div>
     )
-  }; 
+  };
 };
 
 export default TileComponent;

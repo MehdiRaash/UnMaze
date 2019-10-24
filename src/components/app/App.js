@@ -31,7 +31,8 @@ class App extends Component {
       selectedTiles: []
     }
     window.app = this;
-    this.verifyWord.bind(this)
+    this.verifyWord = this.verifyWord.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this)
   }
   findRandomWord(cb) {
     worker.postMessage({ type: 'getRand', value: getRandom(6, 12) });
@@ -97,14 +98,25 @@ class App extends Component {
 
 
     });
- 
+
   }
-  doSth() {
-    this.setState({ mainMessage: "okay" });
+  cancelGame() {
+    this.state.cbs.forEach(cb => {
+      cb('notselected');
+    });
+    this.state.word = [];
+    this.state.selectedTiles = [];
+    this.state.playing = false;
+    log(this.state)
+  }
+  handleMouseUp(e) {
+    if(this.state.playing){
+      this.cancelGame();
+    }
   }
   render() {
     return (
-      <>
+      <div id="wrapper" onMouseUp={this.handleMouseUp}  >
         <Header />
         <PageLayout>
           <GameDescription />
@@ -114,7 +126,7 @@ class App extends Component {
                 this.state.tiles.map((Tile, index) => {
                   return (
                     <Fragment key={index.toString()}>
-                      <Tile verifyWord={this.verifyWord.bind(this)} />
+                      <Tile verifyWord={this.verifyWord} />
                       {(index + 1) % 5 ? null : <br />}
                     </Fragment>
                   );
@@ -125,7 +137,7 @@ class App extends Component {
           </GameBoard>
         </PageLayout>
         <Footer />
-      </>
+      </div>
     );
   }
 }
