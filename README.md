@@ -10,6 +10,6 @@
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 ## History
-Why have I decided to make this? Actually I've been asked by [Inpin]([https://www.inpinapp.com/en](https://www.linkedin.com/company/inpin.ir/about/)) to build this, so this is just a 'sample game' for developers.
+Why have I decided to make this? Actually I've been asked by [Inpin](https://www.linkedin.com/company/inpin.ir/about/) to build this, so this is just a 'sample game' for developers.
 ## Credits 
 ## License
